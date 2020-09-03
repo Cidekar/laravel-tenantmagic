@@ -1,0 +1,35 @@
+{
+    "name": "cidekar/tenantmagic",
+    "description": "This package provides multitenancy support for passport",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Harrison DeStefano",
+            "email": "harrison@cidekar.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cidekar\\Tenantmagic\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Cidekar\\Tenantmagic\\TenantmagicServiceProvider"
+            ],
+            "aliases": {
+                "Tenantmagic": "Cidekar\\Tenantmagic\\TenantmagicFacade"
+            }
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
