@@ -1,0 +1,11 @@
+/vendor
+composer.phar
+.DS_Store
+Thumbs.db
+.idea
+.phpunit.result.cache
+Session.sql
+oauth-private.key
+oauth-public.key
+/packages
+phpunit.xml
