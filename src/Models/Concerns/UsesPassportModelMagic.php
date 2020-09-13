@@ -43,6 +43,7 @@ trait UsesPassportModelMagic
             $user = $this::where('email', $email)->first();
             if ($user) {
                 $user->tenantId = $tenant->id;
+                $user->domain = $tenant->domain;
                 array_push($this->tenants, $user);
                 return;
             }
@@ -52,24 +53,9 @@ trait UsesPassportModelMagic
             return;
         }
 
-        // Tenant lookup from user
-        $tenant = Tenant::where('id', $this->tenants[0]->tenantId)->get()->first();
-
-        if (!$tenant) {
-            return;
-        }
-
-        $tenantConnectionName = $this->tenantDatabaseConnectionName();
-
-        config([
-            "database.connections.{$tenantConnectionName}.database" => $tenant->database
-        ]);
-
         // Inject a model instance into our routes!
         // Explicit model binding to inject the tenant model into the route.
-        Route::bind('tenant', $tenant);
-
-        DB::purge($tenantConnectionName);
+        Route::bind('tenant', $this->tenants);
 
         return $this->tenants[0];
     }

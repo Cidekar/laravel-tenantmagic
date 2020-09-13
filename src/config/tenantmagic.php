@@ -29,4 +29,16 @@
         |
         */
         'allowWildCardScopes' => true,
+
+        /*
+        |--------------------------------------------------------------------------
+        | Headers
+        |--------------------------------------------------------------------------
+        |
+        | Tenantmagic will an x-header to the password grant client response
+        | before returning a Passport token. The name of the header can be changed
+        | by providing a new value here.
+        |
+        */
+        'header' => 'x-magictenant'
     ];

@@ -5,9 +5,11 @@ namespace Cidekar\Tenantmagic\Tests;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Spatie\Multitenancy\MultitenancyServiceProvider;
+use Cidekar\Tenantmagic\TenantmagicServiceProvider;
 use Cidekar\Tenantmagic\Tests\Stubs\MagicTenant;
 use Cidekar\Tenantmagic\Tests\Stubs\MagicUser;
 use Spatie\Multitenancy\Tasks\SwitchTenantDatabaseTask;
+use Laravel\Passport\PassportServiceProvider;
 
 abstract class TestCase extends Orchestra
 {
@@ -16,6 +18,8 @@ abstract class TestCase extends Orchestra
     private MagicTenant $tenant;
 
     private MagicTenant $anotherTenant;
+
+    public $passport;
 
     public function setUp(): void
     {
@@ -28,7 +32,11 @@ abstract class TestCase extends Orchestra
 
     protected function getPackageProviders($app)
     {
-        return [MultitenancyServiceProvider::class];
+        return [
+            MultitenancyServiceProvider::class,
+            PassportServiceProvider::class,
+            TenantmagicServiceProvider::class
+            ];
     }
 
     public function migrateLandlord() : self
@@ -124,5 +132,17 @@ abstract class TestCase extends Orchestra
             'retry_after' => 90,
             'connection' => 'landlord',
         ]);
+    }
+
+    public function passportSetup()
+    {
+
+        config()->set('passport.storage.database.connection','landlord');
+
+        \Artisan::call("passport:client --password --name=tenantmagic --provider=users");
+
+        config()->set('database.default','landlord');
+
+        $this->passport = \DB::table('oauth_clients')->where('id', 1)->get()->first();
     }
 }

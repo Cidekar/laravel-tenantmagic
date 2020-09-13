@@ -2,10 +2,10 @@
 
 namespace Cidekar\Tenantmagic\Http\Controllers;
 
+use Cidekar\Tenantmagic\Tenantmagic;
 use Laravel\Passport\Http\Controllers\AccessTokenController;
 use Psr\Http\Message\ServerRequestInterface;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;   
 
 
 class TenantmagicController extends AccessTokenController
@@ -19,17 +19,13 @@ class TenantmagicController extends AccessTokenController
     public function store(ServerRequestInterface $requestInterface, Request $request)
     {
         try {
-            if(!config('tenantmagic.allowWildCardScopes'))
-            {
-                if ($request->get('scope') === '*') {
-                    return response('Requested scopes must be unique.', 400);
-                }
-            }
+
+            Tenantmagic::checkClientScopes($request);
+
             $response = parent::issueToken($requestInterface);
-            $tenant = Route::getBindingCallback('tenant');
-            return $response->withHeaders([
-                'X-Heroic-Domain' => $tenant->domain,
-            ]);
+
+            return Tenantmagic::issueResponse($response);
+
         } catch (OAuthServerException $exception) {
             return $this->withErrorHandling(function () use ($exception) {
                 throw $exception;
