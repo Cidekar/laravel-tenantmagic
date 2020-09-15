@@ -1,3 +1,5 @@
+<p align="center"><img src="https://user-images.githubusercontent.com/4164072/93266709-776d2800-f778-11ea-91a3-a48651b89882.png" width="540" height="325"></p>
+
 # Introduction
 Laravel Passport makes password grant client authentication dead-simple for your API.  Laravel Multitenancy makes a Laravel application tenant aware in minutes - feels like cheating. Tenantmagic, provides one approach to a making your Passport password grant client tenant aware. Before going through the rest of this documentation, take time to read [Laravel Multitenancy](https://spatie.be/docs/laravel-multitenancy/v1/installation/using-multiple-databases) and [Laravel Passport](https://laravel.com/docs/7.x/passport), if your unfamiliar. Tenantmagic is built on top of Laravel Passport and Laravel Multitenancy.
 
