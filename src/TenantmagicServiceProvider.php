@@ -14,12 +14,12 @@ class TenantmagicServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // routes, event listeners, or any other functionality
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
 
         $this->publishes([
             __DIR__ . '/config/tenantmagic.php' => config_path('tenantmagic.php'),
-        ]);
+        ], 'config');
+
     }
 
     /**
@@ -29,7 +29,6 @@ class TenantmagicServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // bind any classes or functionality to the page
         $this->app->bind(Tenantmagic::class);
 
         $this->mergeConfigFrom(
