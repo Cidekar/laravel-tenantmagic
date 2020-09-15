@@ -3,7 +3,7 @@
 # Introduction
 Laravel Passport makes password grant client authentication dead-simple for your API.  Laravel Multitenancy makes a Laravel application tenant aware in minutes - feels like cheating. Tenantmagic, provides one approach to a making your Passport password grant client tenant aware. Before going through the rest of this documentation, take time to read [Laravel Multitenancy](https://spatie.be/docs/laravel-multitenancy/v1/installation/using-multiple-databases) and [Laravel Passport](https://laravel.com/docs/7.x/passport), if your unfamiliar. Tenantmagic is built on top of Laravel Passport and Laravel Multitenancy.
 
-# Installation
+## Installation
 This package can be installed with Composer:
 
 ```$ composer require "cidekar/tenantmagic:^1.0"```
@@ -82,7 +82,27 @@ Configure your tenant and landlord database connections:
 
 ```
 
-
-# Requirements
+## Requirements
 - Your application is configured for [multitenancy](https://spatie.be/docs/laravel-multitenancy/v1/installation/using-multiple-databases) using a separate database for each tenant
 - Passport is [installed and configured](https://laravel.com/docs/7.x/passport#installation)
+
+## Testing
+To get started, create the following MySql databases:
+
+- `laravel_tenantmagic_landlord`
+- `laravel_tenantmagic_tenant_1`
+- `laravel_tenantmagic_tenant_2`
+
+Now, you may run the package's tests:
+
+``` bash
+   $ composer test
+
+    # Runtime:       PHP 7.4.0
+    # Configuration: /var/www/packages/cidekar/laravel-tenantmagic/phpunit.xml
+    # Warning:       Your XML configuration validates against a deprecated schema.
+    # Suggestion:    Migrate your XML configuration using "--migrate-configuration"!
+    # ...
+```
+## Security
+Please do not publicly disclose security-related issues, email packages@cidekar.com. Security vulnerabilities will be promptly addressed.
