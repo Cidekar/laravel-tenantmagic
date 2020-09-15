@@ -104,5 +104,11 @@ Now, you may run the package's tests:
     # Suggestion:    Migrate your XML configuration using "--migrate-configuration"!
     # ...
 ```
+
 ## Security
 Please do not publicly disclose security-related issues, email packages@cidekar.com. Security vulnerabilities will be promptly addressed.
+
+## License
+Copyright 2020 Cidekar, LLC. All rights reserved.
+
+[Apache License 2.0](./license.md)
