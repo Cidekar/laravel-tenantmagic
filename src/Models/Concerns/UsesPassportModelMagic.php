@@ -2,7 +2,6 @@
 
 namespace Cidekar\Tenantmagic\Models\Concerns;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Spatie\Multitenancy\Models\Tenant;
 
@@ -20,7 +19,7 @@ trait UsesPassportModelMagic
      *
      * @see /vendors/laravel/passport/bridge/userrepository
      * @param string $email The users email address
-     * @return User
+     * @return Boolean
      */
     public function validateForPassportPasswordGrant($password)
     {

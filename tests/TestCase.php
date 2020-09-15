@@ -21,8 +21,10 @@ abstract class TestCase extends Orchestra
 
     public $passport;
 
-    public function setUp(): void
+    public function setUp($options = null): void
     {
+        $this->options = Collect($options);
+
         parent::setUp();
 
         $this->withFactories(__DIR__.'/factories');
@@ -132,6 +134,12 @@ abstract class TestCase extends Orchestra
             'retry_after' => 90,
             'connection' => 'landlord',
         ]);
+
+        if($this->options->get('withoutMiddleware') !== true)
+        {
+            $app->make('Illuminate\Contracts\Http\Kernel')->pushMiddleware('\Spatie\Multitenancy\Http\Middleware\NeedsTenant');
+            $app->make('Illuminate\Contracts\Http\Kernel')->pushMiddleware('\Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession');
+        }
     }
 
     public function passportSetup()
@@ -144,5 +152,6 @@ abstract class TestCase extends Orchestra
         config()->set('database.default','landlord');
 
         $this->passport = \DB::table('oauth_clients')->where('id', 1)->get()->first();
+
     }
 }

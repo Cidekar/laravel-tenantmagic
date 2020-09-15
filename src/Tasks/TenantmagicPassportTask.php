@@ -5,9 +5,9 @@ namespace Cidekar\Tenantmagic\Tasks;
 use Spatie\Multitenancy\Models\Tenant;
 use Spatie\Multitenancy\Tasks\SwitchTenantTask;
 use Laravel\Passport\Passport;
-use App\AuthCodeTenantAware;
-use App\TokenTenantAware;
-use App\RefreshTokenTenantAware;
+use Cidekar\Tenantmagic\Models\Concerns\AuthCodeTenantAware;
+use Cidekar\Tenantmagic\Models\Concerns\TokenTenantAware;
+use Cidekar\Tenantmagic\Models\Concerns\RefreshTokenTenantAware;
 
 class TenantmagicPassportTask implements SwitchTenantTask
 {

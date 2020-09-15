@@ -3,6 +3,8 @@
 namespace Cidekar\Tenantmagic;
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Response;
+use Laravel\Passport\Exceptions\MissingScopeException;
 
 class Tenantmagic
 {
@@ -15,6 +17,23 @@ class Tenantmagic
     {
         $tenant = Route::getBindingCallback('tenant');
         return collect($tenant)->pluck('domain')->join(',');
+    }
+
+    /**
+     * Parse domains from response header.
+     *
+     * @param \Illuminate\Http\Response $response
+     * @return Array $domains An array of domains
+     */
+    public static function parseTenantDomainsFromHeader($response)
+    {
+        $rawHeader = $response->headers->get(config('tenantmagic.header'));
+
+        if(empty($rawHeader))
+        {
+            return null;
+        }
+        return explode(',', $rawHeader);
     }
 
     /**
@@ -33,14 +52,15 @@ class Tenantmagic
     /**
      *  Check grant client requests a specific set of permission when authorizing
      *
-     * @param (\Illuminate\Http\Response $response
+     * @param \Illuminate\Http\Response $response
      * @return \Illuminate\Http\Response
+     * @throws \Laravel\Passport\Exceptions\MissingScopeException
      */
     public static function checkClientScopes(\Illuminate\Http\Request $request)
     {
-        if (!config('tenantmagic.allowWildCardScopes')) {
-            if ($request->get('scope') === '*') {
-                return response('Requested scopes must be unique.', 400);
+        if (config('tenantmagic.allowWildCardScopes') === false) {
+            if ($request->get('scopes') === '*') {
+                throw new MissingScopeException();
             }
         }
     }

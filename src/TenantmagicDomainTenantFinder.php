@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantModel;
 use Spatie\Multitenancy\Models\Tenant;
 use Spatie\Multitenancy\TenantFinder\TenantFinder;
-use Illuminate\Support\Facades\Log;
 
 class TenantmagicDomainTenantFinder extends TenantFinder
 {

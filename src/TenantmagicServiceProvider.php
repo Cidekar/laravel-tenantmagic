@@ -15,7 +15,6 @@ class TenantmagicServiceProvider extends ServiceProvider
     public function boot()
     {
         // routes, event listeners, or any other functionality
-        //include __DIR__ . '/routes.php';
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
 
         $this->publishes([

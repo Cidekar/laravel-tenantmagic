@@ -23,6 +23,22 @@ class User extends Authenticatable
 ```
 Please keep in mind this package assumes the grant client is stored in the landlord database. Users are stored in the tenant database.
 
+Add the TenantmagicDomainTenantFinder to the multitenancy config:
+
+```php
+return [
+    /*
+     * This class is responsible for determining which tenant should be current
+     * for the given request.
+     *
+     * This class should extend `Spatie\Multitenancy\TenantFinder\TenantFinder`
+     *
+     */
+    'tenant_finder' => TenantmagicDomainTenantFinder::class,
+
+    ...
+
+```
 # Requirements
 - Your application is configured for [multitenancy](https://spatie.be/docs/laravel-multitenancy/v1/installation/using-multiple-databases) using a separate database for each tenant
 - Passport is [installed and configured](https://laravel.com/docs/7.x/passport#installation)
