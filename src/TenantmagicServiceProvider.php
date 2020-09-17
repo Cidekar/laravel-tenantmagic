@@ -3,6 +3,7 @@
 namespace Cidekar\Tenantmagic;
 
 use Illuminate\Support\ServiceProvider;
+use Cidekar\Tenantmagic\Commands\CreateTenantCommand;
 
 class TenantmagicServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,12 @@ class TenantmagicServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/config/tenantmagic.php' => config_path('tenantmagic.php'),
         ], 'config');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                CreateTenantCommand::class,
+            ]);
+        }
 
     }
 
