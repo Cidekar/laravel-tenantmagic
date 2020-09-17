@@ -2,6 +2,7 @@
 
 namespace Cidekar\Tenantmagic\Models\Concerns;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Spatie\Multitenancy\Models\Tenant;
 
@@ -43,6 +44,7 @@ trait UsesPassportModelMagic
             if ($user) {
                 $user->tenantId = $tenant->id;
                 $user->domain = $tenant->domain;
+                $user->tenantDatabase = $tenant->database;
                 array_push($this->tenants, $user);
                 return;
             }
@@ -52,10 +54,40 @@ trait UsesPassportModelMagic
             return;
         }
 
+        $this->setTenantDatabaseConnection();
+
         // Inject a model instance into our routes!
         // Explicit model binding to inject the tenant model into the route.
         Route::bind('tenant', $this->tenants);
 
+        $this->purgeTenantDatabaseConnection();
+
         return $this->tenants[0];
+    }
+
+    /**
+     * Set the tenant's connection; allows for token storage into tenant's database.
+     *
+     * @return void
+     */
+    public function setTenantDatabaseConnection()
+    {
+        // We pick the first tenant from the tenants array and set this as the
+        // database connection.
+        $tenantConnectionName = $this->tenantDatabaseConnectionName();
+
+        config([
+            "database.connections.{$tenantConnectionName}.database" => $this->tenants[0]->tenantDatabase
+        ]);
+    }
+
+    /**
+     * Purge the tenant's connection.
+     *
+     * @return void
+     */
+    public function purgeTenantDatabaseConnection()
+    {
+        DB::purge($this->tenantDatabaseConnectionName());
     }
 }

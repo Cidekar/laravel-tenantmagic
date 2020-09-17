@@ -23,7 +23,6 @@ class TenantmagicPassportTask implements SwitchTenantTask
 
     protected function setTenantPassport(?Tenant $tenant = null): void
     {
-
         Passport::useAuthCodeModel(AuthCodeTenantAware::class);
         Passport::useRefreshTokenModel(RefreshTokenTenantAware::class);
         Passport::useTokenModel(TokenTenantAware::class);

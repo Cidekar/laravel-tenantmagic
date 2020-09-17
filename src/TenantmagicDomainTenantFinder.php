@@ -26,6 +26,8 @@ class TenantmagicDomainTenantFinder extends TenantFinder
             $tenant = $this->getTenantModel()::whereDomain($request->headers->get('X-Forwarded-Host'))->first();
             return $tenant;
         }
+
+        
         return $tenant;
     }
 }
