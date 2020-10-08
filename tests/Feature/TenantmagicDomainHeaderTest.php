@@ -10,7 +10,7 @@ use \Illuminate\Http\Response;
 class TenantmagicDomainHeaderTest extends TestCase
 {
 
-    public function setUp(): void
+    public function setUp($options = null): void
     {
         parent::setUp(['withoutMiddleware' => true]);
 

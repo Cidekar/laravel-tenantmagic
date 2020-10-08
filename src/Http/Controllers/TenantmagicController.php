@@ -6,7 +6,7 @@ use Cidekar\Tenantmagic\Tenantmagic;
 use Laravel\Passport\Http\Controllers\AccessTokenController;
 use Psr\Http\Message\ServerRequestInterface;
 use Illuminate\Http\Request;
-
+use Spatie\Multitenancy\Models\Tenant;
 
 class TenantmagicController extends AccessTokenController
 {
@@ -21,6 +21,18 @@ class TenantmagicController extends AccessTokenController
         try {
 
             Tenantmagic::checkClientScopes($request);
+
+            $domain = $request->headers->get('X-Forwarded-Host');
+
+            if($domain !== null)
+            {
+                $tenant = Tenant::where('domain', $domain)->first();
+
+                if($tenant)
+                {
+                    $tenant->makeCurrent();
+                }
+            }
 
             $response = parent::issueToken($requestInterface);
 

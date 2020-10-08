@@ -13,7 +13,7 @@ class TenantmagicDomainTenantFinderTest extends TestCase
 
     private TenantmagicDomainTenantFinder $TenantmagicDomainTenantFinder;
 
-    public function setUp(): void
+    public function setUp($options = null): void
     {
         parent::setUp();
 

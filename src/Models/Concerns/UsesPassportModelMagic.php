@@ -36,19 +36,32 @@ trait UsesPassportModelMagic
      */
     public function findForPassport($email)
     {
+        $tenant = Tenant::current();
 
-        // For every tenant, search until we have a match ...
-        Tenant::all()->eachCurrent(function (Tenant $tenant) use ($email) {
-            Tenant::current() === $tenant->id;
+        if($tenant){
+           $tenant->makeCurrent();
+
             $user = $this::where('email', $email)->first();
-            if ($user) {
+            if($user){
                 $user->tenantId = $tenant->id;
                 $user->domain = $tenant->domain;
                 $user->tenantDatabase = $tenant->database;
                 array_push($this->tenants, $user);
-                return;
             }
-        });
+        } else {
+            // For every tenant, search until we have a match ...
+            Tenant::all()->eachCurrent(function (Tenant $tenant) use ($email) {
+                Tenant::current() === $tenant->id;
+                $user = $this::where('email', $email)->first();
+                if ($user) {
+                    $user->tenantId = $tenant->id;
+                    $user->domain = $tenant->domain;
+                    $user->tenantDatabase = $tenant->database;
+                    array_push($this->tenants, $user);
+                    return;
+                }
+            });
+        }
 
         if (empty($this->tenants)) {
             return;

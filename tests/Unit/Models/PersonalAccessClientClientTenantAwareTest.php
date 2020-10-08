@@ -8,7 +8,7 @@ use Cidekar\Tenantmagic\Tests\Stubs\MagicTenant;
 class PersonalAccessClientClientTenantAwareTest extends TestCase
 {
 
-    public function setUp(): void
+    public function setUp($options = null): void
     {
         parent::setUp();
 

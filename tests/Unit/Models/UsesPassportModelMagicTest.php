@@ -8,7 +8,7 @@ use Cidekar\Tenantmagic\Tests\Stubs\MagicUser;
 class UsesPassportModelMagicTest extends TestCase
 {
 
-    public function setUp(): void
+    public function setUp($options = null): void
     {
         parent::setUp();
 

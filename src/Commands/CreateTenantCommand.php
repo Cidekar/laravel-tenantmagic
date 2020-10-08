@@ -17,11 +17,10 @@ class CreateTenantCommand extends Command
      * @var string
      */
     protected $signature = 'tenants:create tenant
-                                { tenant       : The name of the tenant to create a database for }
-                                { --domain=     : A custom domain for the tenant }
-                                { --d|dryrun   : Dry run database creation }
-                                { --m|magic    : Automatically name non-unique tenant }
-                                { --id=        : The id of a tenant }';
+                                { tenant?     : The name of the tenant to create a database for }
+                                { --domain=   : A custom domain for the tenant }
+                                { --d|dryrun  : Dry run database creation }
+                                { --m|magic   : Automatically name non-unique tenant }';
 
     /**
      * The console command description.
@@ -76,9 +75,14 @@ class CreateTenantCommand extends Command
      */
     public function handle()
     {
+
         try
         {
-            $this->tenantName = $this->option('magic') ? $this->magicallyNameTenant() : $this->argument('tenant');
+            if($this->argument('tenant') === null){
+                $this->tenantName = $this->ask('What is tenant\'s name?');
+            } else{
+                $this->tenantName = $this->option('magic') ? $this->magicallyNameTenant() : $this->argument('tenant');
+            }
             if ($this->option('dryrun'))
             {
                 $this->dryRun();
@@ -88,13 +92,13 @@ class CreateTenantCommand extends Command
             }
         } catch (\Exception $e) {
             $this->error($e->getMessage());
+            return 1;
         }
 
     }
 
     private function create()
     {
-
         $this->info("Create; started");
 
         $tenant = new Tenant();
@@ -105,9 +109,11 @@ class CreateTenantCommand extends Command
 
         $this->info("Create; tenant addded to landlord");
         $this->info("Create; begin tenant database addition");
+
         if (DB::statement($this->getCreateTenantDBQuery()) === true) {
             $this->info("Create; tenant database added");
             $this->info("Create; complete");
+
         } else {
             throw new Exception("Error creating database for tenant.");
         }
@@ -118,13 +124,15 @@ class CreateTenantCommand extends Command
     public function dryRun()
     {
         $this->info("Dry run; started");
-        if (DB::statement($this->getCreateTenantDBQuery()) === true) {
-            $this->info("Dry run; database for tenant");
-            if (DB::statement("DROP DATABASE ". $this->tenantName) === true) {
-                $this->info("Dry run; dropped database for tenant");
-            } else {
-                throw new Exception("Dry run; error dropping tenant database");
-            }
+        $db = DB::select("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", [$this->tenantName]);
+        if ( count($db) === 0) {
+            $this->info("Dry run; database for tenant can be create");
+        }
+        else {
+            throw new Exception("Dry run; database exists.");
+        }
+        if(DB::table('tenants')->where('domain', $this->tenantName)->exists()){
+            throw new Exception("Dry run; tenant exists.");
         }
         $this->info('Dry run; complete.');
         return $this;
