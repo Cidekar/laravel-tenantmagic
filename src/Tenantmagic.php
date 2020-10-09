@@ -3,7 +3,6 @@
 namespace Cidekar\Tenantmagic;
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Response;
 use Laravel\Passport\Exceptions\MissingScopeException;
 
 class Tenantmagic

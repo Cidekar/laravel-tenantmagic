@@ -13,7 +13,7 @@ This package can be installed with Composer:
 
 Publish the configuration:
 
-```php artisan vendor:publish --provider="Cidekar\Tenantmagic\TeanantmagicServiceProvider" --tag="config"```
+```php artisan vendor:publish --provider="Cidekar\Tenantmagic\TenantmagicServiceProvider" --tag="config"```
 
 The configuration will be published to config/tenantmagic.php
 

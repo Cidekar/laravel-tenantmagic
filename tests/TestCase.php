@@ -15,9 +15,9 @@ abstract class TestCase extends Orchestra
 {
     use WithLaravelMigrations;
 
-    private MagicTenant $tenant;
+    protected MagicTenant $tenant;
 
-    private MagicTenant $anotherTenant;
+    protected MagicTenant $anotherTenant;
 
     public $passport;
 

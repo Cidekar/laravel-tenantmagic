@@ -8,7 +8,7 @@ use Cidekar\Tenantmagic\Tests\Stubs\MagicUser;
 class TenantmagicScopeTest extends TestCase
 {
 
-    public function setUp(): void
+    public function setUp($options = null): void
     {
         parent::setUp(['withoutMiddleware' => true]);
 
