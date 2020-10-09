@@ -75,7 +75,6 @@ class CreateTenantCommand extends Command
      */
     public function handle()
     {
-<<<<<<< HEAD
 
         try
         {
@@ -84,11 +83,6 @@ class CreateTenantCommand extends Command
             } else{
                 $this->tenantName = $this->option('magic') ? $this->magicallyNameTenant() : $this->argument('tenant');
             }
-=======
-        try
-        {
-            $this->tenantName = $this->option('magic') ? $this->magicallyNameTenant() : $this->argument('tenant');
->>>>>>> 2bc57c5e30e672f36c1eea8a5a3d588524712e0c
             if ($this->option('dryrun'))
             {
                 $this->dryRun();
@@ -98,20 +92,13 @@ class CreateTenantCommand extends Command
             }
         } catch (\Exception $e) {
             $this->error($e->getMessage());
-<<<<<<< HEAD
             return 1;
-=======
->>>>>>> 2bc57c5e30e672f36c1eea8a5a3d588524712e0c
         }
 
     }
 
     private function create()
     {
-<<<<<<< HEAD
-=======
-
->>>>>>> 2bc57c5e30e672f36c1eea8a5a3d588524712e0c
         $this->info("Create; started");
 
         $tenant = new Tenant();
@@ -122,17 +109,11 @@ class CreateTenantCommand extends Command
 
         $this->info("Create; tenant addded to landlord");
         $this->info("Create; begin tenant database addition");
-<<<<<<< HEAD
 
         if (DB::statement($this->getCreateTenantDBQuery()) === true) {
             $this->info("Create; tenant database added");
             $this->info("Create; complete");
 
-=======
-        if (DB::statement($this->getCreateTenantDBQuery()) === true) {
-            $this->info("Create; tenant database added");
-            $this->info("Create; complete");
->>>>>>> 2bc57c5e30e672f36c1eea8a5a3d588524712e0c
         } else {
             throw new Exception("Error creating database for tenant.");
         }
@@ -143,7 +124,6 @@ class CreateTenantCommand extends Command
     public function dryRun()
     {
         $this->info("Dry run; started");
-<<<<<<< HEAD
         $db = DB::select("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", [$this->tenantName]);
         if ( count($db) === 0) {
             $this->info("Dry run; database for tenant can be create");
@@ -153,15 +133,6 @@ class CreateTenantCommand extends Command
         }
         if(DB::table('tenants')->where('domain', $this->tenantName)->exists()){
             throw new Exception("Dry run; tenant exists.");
-=======
-        if (DB::statement($this->getCreateTenantDBQuery()) === true) {
-            $this->info("Dry run; database for tenant");
-            if (DB::statement("DROP DATABASE ". $this->tenantName) === true) {
-                $this->info("Dry run; dropped database for tenant");
-            } else {
-                throw new Exception("Dry run; error dropping tenant database");
-            }
->>>>>>> 2bc57c5e30e672f36c1eea8a5a3d588524712e0c
         }
         $this->info('Dry run; complete.');
         return $this;
