@@ -1,6 +1,6 @@
 {
     "name": "cidekar/laravel-tenantmagic",
-    "description": "This package provides multitenancy support for  Laravel Passport and Multitenancy",
+    "description": "A multitenancy package for Laravel Passport.",
     "license": "MIT",
     "authors": [
         {
