@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "php": "^7.4",
+        "php": ">=7.4",
         "laravel/passport": "^9.3|^10.0",
         "spatie/laravel-multitenancy": "^1.0"
     },
