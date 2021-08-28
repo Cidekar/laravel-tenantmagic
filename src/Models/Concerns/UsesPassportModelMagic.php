@@ -16,14 +16,7 @@ trait UsesPassportModelMagic
     private $tenants = [];
 
     /**
-     *  The user for current request.
-     * 
-     * @var App\User
-     */
-    private $user;
-
-    /**
-     * Passport override to find a validate for passport grant; requests token.
+     * Passport override to find a validate for passport grant; requests tokeÍn.
      *
      * @see /vendors/laravel/passport/bridge/userrepository
      * @param string $email The users email address
@@ -55,7 +48,7 @@ trait UsesPassportModelMagic
                 $user->tenantDatabase = $tenant->database;
                 $this->user = $user;
                 
-                array_push($this->tenants, $tenant);
+                array_push($this->tenants, $user);
                 
             }
         } else {
@@ -65,11 +58,11 @@ trait UsesPassportModelMagic
                 $user = $this::where('email', $email)->first();
                 if ($user) {
                     $user->tenantId = $tenant->id;
-                    $tenant->domain;
+                    $user->domain = $tenant->domain;
                     $user->tenantDatabase = $tenant->database;
                     $this->user = $user;
 
-                    array_push($this->tenants, $tenant);
+                    array_push($this->tenants, $user);
                     return;
                 }
             });

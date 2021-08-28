@@ -2,6 +2,7 @@
 
 namespace Cidekar\Tenantmagic;
 
+use \Exception;
 use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Exceptions\MissingScopeException;
 
@@ -14,8 +15,20 @@ class Tenantmagic
      */
     public static function getTenantDomainsFromRoute()
     {
-        $tenant = Route::getBindingCallback('tenant');
-        return collect($tenant)->pluck('domain')->join(',');
+        try
+        {
+            $tenant = Route::getBindingCallback('tenant');
+            
+            if(!empty($tenant))
+            {
+               return $tenant[0]->getDomain()->pluck('domain')->join(',');
+            }
+        }
+        catch(\Error $e)
+        {
+            throw new Exception('Unable to obtain tenant from route binding.');
+        }
+        
     }
 
     /**
