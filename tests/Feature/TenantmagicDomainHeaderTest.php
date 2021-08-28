@@ -35,7 +35,7 @@ class TenantmagicDomainHeaderTest extends TestCase
             'grant_type' => 'password',
             'scopes' => 'user project',
         ]);
-
+       
         $this->assertNotNull($response->headers->get(config('tenantmagic.header')));
     }
 

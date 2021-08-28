@@ -16,6 +16,13 @@ trait UsesPassportModelMagic
     private $tenants = [];
 
     /**
+      *  The user for current request.
+      * 
+      * @var App\User
+      */
+    private $domains = [];
+
+    /**
      * Passport override to find a validate for passport grant; requests tokeÍn.
      *
      * @see /vendors/laravel/passport/bridge/userrepository
@@ -49,6 +56,8 @@ trait UsesPassportModelMagic
                 $this->user = $user;
                 
                 array_push($this->tenants, $user);
+
+                array_push($this->domains, $tenant->domain);
                 
             }
         } else {
@@ -60,9 +69,13 @@ trait UsesPassportModelMagic
                     $user->tenantId = $tenant->id;
                     $user->domain = $tenant->domain;
                     $user->tenantDatabase = $tenant->database;
+                    
                     $this->user = $user;
 
                     array_push($this->tenants, $user);
+
+                    array_push($this->domains, $tenant->domain);
+
                     return;
                 }
             });
@@ -77,6 +90,8 @@ trait UsesPassportModelMagic
         // Inject a model instance into our routes!
         // Explicit model binding to inject the tenant model into the route.
         Route::bind('tenant', $this->tenants);
+
+        Route::bind('domains', $this->domains);
 
         $this->purgeTenantDatabaseConnection();
 

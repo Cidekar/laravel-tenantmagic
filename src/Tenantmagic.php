@@ -17,12 +17,14 @@ class Tenantmagic
     {
         try
         {
-            $tenant = Route::getBindingCallback('tenant');
-            
-            if(!empty($tenant))
+            $domains = Route::getBindingCallback('domains');            
+
+            if(!empty($domains))
             {
-               return $tenant[0]->getDomain()->pluck('domain')->join(',');
+               return join(',',$domains);
             }
+
+            throw new Exception('Domain not round in route binding.');
         }
         catch(\Error $e)
         {
