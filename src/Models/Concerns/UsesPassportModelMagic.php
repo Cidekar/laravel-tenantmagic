@@ -3,6 +3,7 @@
 namespace Cidekar\Tenantmagic\Models\Concerns;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Spatie\Multitenancy\Models\Tenant;
 
@@ -49,7 +50,9 @@ trait UsesPassportModelMagic
            $tenant->makeCurrent();
 
             $user = $this::where('email', $email)->first();
-            if($user){
+            if ($user && 
+                    Hash::check(Route::getCurrentRequest()->request->get('password'), $user->password)
+            ) {
                 $user->tenantId = $tenant->id;
                 $tenant->domain;
                 $user->tenantDatabase = $tenant->database;
