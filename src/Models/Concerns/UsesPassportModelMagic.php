@@ -50,9 +50,7 @@ trait UsesPassportModelMagic
            $tenant->makeCurrent();
 
             $user = $this::where('email', $email)->first();
-            if ($user && 
-                    Hash::check(Route::getCurrentRequest()->request->get('password'), $user->password)
-            ) {
+            if($user){
                 $user->tenantId = $tenant->id;
                 $tenant->domain;
                 $user->tenantDatabase = $tenant->database;
@@ -63,12 +61,13 @@ trait UsesPassportModelMagic
                 array_push($this->domains, $tenant->domain);
                 
             }
-        } else {
-            // For every tenant, search until we have a match ...
+        } else {  
             Tenant::all()->eachCurrent(function (Tenant $tenant) use ($email) {
                 Tenant::current() === $tenant->id;
                 $user = $this::where('email', $email)->first();
-                if ($user) {
+                if ($user && 
+                    Hash::check(Route::getCurrentRequest()->request->get('password'), $user->password)
+                ){
                     $user->tenantId = $tenant->id;
                     $user->domain = $tenant->domain;
                     $user->tenantDatabase = $tenant->database;
