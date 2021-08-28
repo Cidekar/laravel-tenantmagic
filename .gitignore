@@ -9,4 +9,4 @@ oauth-private.key
 oauth-public.key
 /packages
 phpunit.xml
-.composer.lock
+composer.lock
