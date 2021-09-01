@@ -10,16 +10,16 @@ use Spatie\Multitenancy\Models\Tenant;
 trait UsesPassportModelMagic
 {
     /**
-     *  The tenants.
+     *  The tenants a use is a member of.
      *
      * @var array
      */
     private $tenants = [];
 
     /**
-      *  The user for current request.
+      *  The domains a user is a member of.
       * 
-      * @var App\User
+      * @var array
       */
     private $domains = [];
 
@@ -52,7 +52,7 @@ trait UsesPassportModelMagic
             $user = $this::where('email', $email)->first();
             if($user){
                 $user->tenantId = $tenant->id;
-                $tenant->domain;
+                $user->domain = $tenant->domain;
                 $user->tenantDatabase = $tenant->database;
                 $this->user = $user;
                 
@@ -70,15 +70,14 @@ trait UsesPassportModelMagic
                 ){
                     $user->tenantId = $tenant->id;
                     $user->domain = $tenant->domain;
-                    $user->tenantDatabase = $tenant->database;
-                    
+                    $user->tenantDatabase = $tenant->database;  
                     $this->user = $user;
-
                     array_push($this->tenants, $user);
-
+                    array_unshift($this->domains, $tenant->domain);
+                }
+                else if($user)
+                {
                     array_push($this->domains, $tenant->domain);
-
-                    return;
                 }
             });
         }
