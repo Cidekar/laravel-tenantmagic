@@ -4,7 +4,7 @@ namespace Cidekar\Tenantmagic;
 
 use Illuminate\Support\Facades\Facade;
 
-class TenantmagicFadade extends Facade
+class TenantmagicFacade extends Facade
 {
     /**
      * Get the registered name of the component.
