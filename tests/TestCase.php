@@ -10,6 +10,7 @@ use Cidekar\Tenantmagic\Tests\Stubs\MagicTenant;
 use Cidekar\Tenantmagic\Tests\Stubs\MagicUser;
 use Spatie\Multitenancy\Tasks\SwitchTenantDatabaseTask;
 use Laravel\Passport\PassportServiceProvider;
+use Laravel\Passport\Passport;
 
 abstract class TestCase extends Orchestra
 {
@@ -20,9 +21,15 @@ abstract class TestCase extends Orchestra
     protected MagicTenant $anotherTenant;
 
     public $passport;
+    
+    const KEYS = __DIR__.'/';
+    const PUBLIC_KEY = self::KEYS.'/oauth-public.key';
+    const PRIVATE_KEY = self::KEYS.'/oauth-private.key';
 
     public function setUp($options = null): void
     {
+        
+       
         $this->options = Collect($options);
 
         parent::setUp();
@@ -144,6 +151,10 @@ abstract class TestCase extends Orchestra
 
     public function passportSetup()
     {
+        
+        Passport::loadKeysFrom(self::KEYS);
+
+        //\Artisan::call("passport:keys");
 
         config()->set('passport.storage.database.connection','landlord');
 

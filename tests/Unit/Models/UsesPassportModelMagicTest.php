@@ -4,12 +4,17 @@ namespace Cidekar\Tenantmagic\Tests\Unit\Models;
 
 use Cidekar\Tenantmagic\Tests\TestCase;
 use Cidekar\Tenantmagic\Tests\Stubs\MagicUser;
+use Lcobucci\JWT\Configuration;
+use Laravel\Passport\ClientRepository;
+use Laravel\Passport\TokenRepository;
 
 class UsesPassportModelMagicTest extends TestCase
 {
 
     public function setUp($options = null): void
     {
+        parent::setUp(['withoutMiddleware' => true]);
+
         parent::setUp();
 
         $this->migrateTenants();
@@ -31,9 +36,29 @@ class UsesPassportModelMagicTest extends TestCase
         $this->assertTrue($model->validateForPassportPasswordGrant('foo'));
     }
 
-    public function test_it_can_find_for_passport()
+    public function test_it_can_find_user_for_passport()
     {
-        $model = new MagicUser();
-        $this->assertNotNull($model->findForPassport('tenant@magic.com'));
+        $route = config('tenantmagic.route.prefix') . config('tenantmagic.route.name', 'tenantmagic');
+       
+        $response = $this->post($route, [
+            'client_id' => $this->passport->id,
+            'client_secret' => $this->passport->secret,
+            'username' => 'tenant@magic.com',
+            'password' => 'password',
+            'grant_type' => 'password',
+            'scopes' => 'user project',
+        ]);
+        
+        $response->assertOk();
+
+        $decodedResponse = $response->decodeResponseJson()->json();
+
+        $this->assertArrayHasKey('token_type', $decodedResponse);
+        $this->assertArrayHasKey('expires_in', $decodedResponse);
+        $this->assertArrayHasKey('access_token', $decodedResponse);
+        $this->assertSame('Bearer', $decodedResponse['token_type']);
+        $expiresInSeconds = 31536000;
+        $this->assertEqualsWithDelta($expiresInSeconds, $decodedResponse['expires_in'], 5); 
+     
     }
 }

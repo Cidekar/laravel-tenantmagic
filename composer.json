@@ -12,7 +12,7 @@
     "require": {
         "php": "^7.4|^8.0",
         "laravel/passport": "^9.3|^10.0",
-        "spatie/laravel-multitenancy": "^1.0"
+        "spatie/laravel-multitenancy": "^2.3.3"
     },
     "autoload": {
         "psr-4": {
@@ -35,7 +35,7 @@
         }
     },
     "scripts": {
-        "test": "vendor/bin/phpunit --stop-on-failure",
+        "test": "vendor/bin/phpunit",
         "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
         "format": "vendor/bin/php-cs-fixer fix --allow-risky=yes"
     },
@@ -46,6 +46,6 @@
     "prefer-stable": true,
     "require-dev": {
         "laravel/legacy-factories": "^1.0.4",
-        "orchestra/testbench": "^5.5"
+        "orchestra/testbench": "^7.1.0"
     }
 }
