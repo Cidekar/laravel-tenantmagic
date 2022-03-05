@@ -10,18 +10,25 @@ use Spatie\Multitenancy\Models\Tenant;
 trait UsesPassportModelMagic
 {
     /**
-     *  The tenants a use is a member of.
+      * Tenant domain cache for route binding.
+      * 
+      * @var array
+      */
+      private $domains = [];
+
+    /**
+     *  The tenant the current user is authorized to access.
+     *
+     * @var array
+     */
+    private $tenant = null;
+
+    /**
+     *  Tenant and user cache for route binding.
      *
      * @var array
      */
     private $tenants = [];
-
-    /**
-      *  The domains a user is a member of.
-      * 
-      * @var array
-      */
-    private $domains = [];
 
     /**
      * Passport override to find a validate for passport grant; requests tokeÍn.
@@ -35,7 +42,7 @@ trait UsesPassportModelMagic
         return \Hash::check($password, $this->password);
     }
 
-    /**
+     /**
      * Passport override to find a user for passport grant; requests token.
      *
      * @see /vendors/laravel/passport/bridge/userrepository
@@ -44,84 +51,112 @@ trait UsesPassportModelMagic
      */
     public function findForPassport($email)
     {
-        $tenant = Tenant::current();
 
-        if($tenant){
-           $tenant->makeCurrent();
-
-            $user = $this::where('email', $email)->first();
-            if($user){
-                $user->tenantId = $tenant->id;
-                $user->domain = $tenant->domain;
-                $user->tenantDatabase = $tenant->database;
-                $this->user = $user;
-                
-                array_push($this->tenants, $user);
-
-                array_push($this->domains, $tenant->domain);
-                
-            }
-        } else {  
-            Tenant::all()->eachCurrent(function (Tenant $tenant) use ($email) {
-                Tenant::current() === $tenant->id;
-                $user = $this::where('email', $email)->first();
-                if ($user && 
-                    Hash::check(Route::getCurrentRequest()->request->get('password'), $user->password)
-                ){
-                    $user->tenantId = $tenant->id;
-                    $user->domain = $tenant->domain;
-                    $user->tenantDatabase = $tenant->database;  
-                    $this->user = $user;
-                    array_push($this->tenants, $user);
-                    array_unshift($this->domains, $tenant->domain);
-                }
-                else if($user)
-                {
-                    array_push($this->domains, $tenant->domain);
-                }
-            });
-        }
-
-        if (empty($this->tenants)) {
-            return;
-        }
+    // Attempting to authorize the user for 
+    // a know tenant; provided in the original 
+    // request.
+    if( Tenant::current() )
+    {
         
-        $this->setTenantDatabaseConnection();
+        $user = $this::where('email', $email)->first();
+        
+        if($user){
 
-        // Inject a model instance into our routes!
-        // Explicit model binding to inject the tenant model into the route.
-        Route::bind('tenant', $this->tenants);
+            $this->mergeTenantUserForRoute($user);    
+        }
+    } 
+    // Otherwise the tenant is not known, 
+    // so search all tenants returning each 
+    // where the user is found, and authorize 
+    // against the provided user's password.
+    else 
+    {  
+        Tenant::all()->eachCurrent(function (Tenant $tenant) use ($email) {
+            
+            $user = $this::where('email', $email)->first();
+            
+            if ($user && Hash::check(Route::getCurrentRequest()->request->get('password'), $user->password))
+            {
+                $this->tenant = Tenant::current();
+                $this->mergeTenantUserForRoute($user, true);
+            }
+            else if($user)
+            {
+                array_push($this->domains, $tenant->domain);
+            }
+        });
+    }
 
-        Route::bind('domains', $this->domains);
+    if (empty($this->tenants)) {
+        return;
+    }
 
-        $this->purgeTenantDatabaseConnection();
+    $this->bindTenantUserToRoute();
 
-        return $this->user;
+    // Bind the proper tenant database,
+    // otherwise Passport will not have 
+    // the current database connection as
+    // it will be set to null.
+    $this->ensureTenantIsSet($this->tenant);
+
+    // Return the user for Passport to handle 
+    // authorization and token issue.
+    return $this->user;
     }
 
     /**
-     * Set the tenant's connection; allows for token storage into tenant's database.
-     *
-     * @return void
+     * Helper used to join tenant and user data for route binding
      */
-    public function setTenantDatabaseConnection()
+    private function mergeTenantUserForRoute($user, $frontOfLine = false)
     {
-        // We pick the first tenant from the tenants array and set this as the
-        // database connection.
-        $tenantConnectionName = $this->tenantDatabaseConnectionName();
+    $this->tenant = Tenant::current();
 
-        config([
-            "database.connections.{$tenantConnectionName}.database" => $this->tenants[0]->tenantDatabase
-        ]);
+    $user->tenantId = $this->tenant->id;
+    $user->domain = $this->tenant->domain;
+    $user->tenantDatabase = $this->tenant->database;  
+
+    $this->user = $user;
+
+    array_push($this->tenants, $user);
+
+    // The tenant a user is authorized against, 
+    // be sure it is the first item in the $domains.
+    if($frontOfLine)
+    {
+        array_unshift($this->domains, $this->tenant->domain);
+    }
+    else
+    {
+        array_push($this->domains, $this->tenant->domain);
+    }
+
     }
 
     /**
-     * Purge the tenant's connection.
-     *
-     * @return void
+     * Explicitly bind modal to the route.
      */
-    public function purgeTenantDatabaseConnection()
+    private function bindTenantUserToRoute()
     {
-        DB::purge($this->tenantDatabaseConnectionName());
+
+    Route::bind('tenant', $this->tenants);
+
+    Route::bind('domains', $this->domains);
+    }
+
+    /**
+     * Set tenant to current if none is currently defined
+     */
+    private function ensureTenantIsSet(Tenant $tenant)
+    {   
+        try{
+            if(Tenant::current() === null)
+            {
+                $tenant->makeCurrent();
+            }
+        }
+        catch(\Error $error)
+        {
+            throw new Exception("Unable to set tenant.");
+        }
     }
 }

@@ -24,11 +24,11 @@ class Tenantmagic
                return join(',',$domains);
             }
 
-            throw new Exception('Domain not round in route binding.');
+            throw new Exception('Domain not found in route binding.');
         }
         catch(\Error $e)
         {
-            throw new Exception('Unable to obtain tenant from route binding.');
+            throw new Exception('Unable to obtain domain from route binding.');
         }
         
     }
