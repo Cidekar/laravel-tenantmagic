@@ -31,11 +31,11 @@ class TenantmagicDomainHeaderTest extends TestCase
             'client_id' => $this->passport->id,
             'client_secret' => $this->passport->secret,
             'username' => 'tenant@magic.com',
-            'password' => 'password',
+            'password' => '123',
             'grant_type' => 'password',
             'scopes' => 'user project',
         ]);
-       
+        
         $this->assertNotNull($response->headers->get(config('tenantmagic.header')));
     }
 
@@ -46,7 +46,7 @@ class TenantmagicDomainHeaderTest extends TestCase
             'client_id' => $this->passport->id,
             'client_secret' => $this->passport->secret,
             'username' => 'tenant@magic.com',
-            'password' => 'password',
+            'password' => '123',
             'grant_type' => 'password',
             'scopes' => 'user project',
         ]);

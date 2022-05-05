@@ -21,6 +21,7 @@ class Tenantmagic
 
             if(!empty($domains))
             {
+                return Collect($domains)->toJson();
                return join(',',$domains);
             }
 

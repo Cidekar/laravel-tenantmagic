@@ -4,9 +4,7 @@ namespace Cidekar\Tenantmagic\Tests\Unit\Models;
 
 use Cidekar\Tenantmagic\Tests\TestCase;
 use Cidekar\Tenantmagic\Tests\Stubs\MagicUser;
-use Lcobucci\JWT\Configuration;
-use Laravel\Passport\ClientRepository;
-use Laravel\Passport\TokenRepository;
+use Illuminate\Support\Facades\Route as RouteFacade;
 
 class UsesPassportModelMagicTest extends TestCase
 {
@@ -44,7 +42,7 @@ class UsesPassportModelMagicTest extends TestCase
             'client_id' => $this->passport->id,
             'client_secret' => $this->passport->secret,
             'username' => 'tenant@magic.com',
-            'password' => 'password',
+            'password' => '123',
             'grant_type' => 'password',
             'scopes' => 'user project',
         ]);
@@ -59,6 +57,20 @@ class UsesPassportModelMagicTest extends TestCase
         $this->assertSame('Bearer', $decodedResponse['token_type']);
         $expiresInSeconds = 31536000;
         $this->assertEqualsWithDelta($expiresInSeconds, $decodedResponse['expires_in'], 5); 
-     
+    }
+
+    public function test_it_can_get_token_from_passport() 
+    {    
+        $model = new MagicUser();
+
+        $request = request();
+        $request->request->add(['password' => '123']); 
+
+        RouteFacade::shouldReceive('getCurrentRequest')
+            ->andReturn($request)
+            ->shouldReceive('bind')
+            ->andReturn(true);
+
+        $this->assertNotNull($model->findForPassport('tenant@magic.com'));
     }
 }

@@ -119,15 +119,20 @@ trait UsesPassportModelMagic
 
     array_push($this->tenants, $user);
 
+    $bindableTenantData = Collect([
+        'domain' => $this->tenant->domain,
+        'name' => $this->tenant->name
+    ]);
+
     // The tenant a user is authorized against, 
     // be sure it is the first item in the $domains.
     if($frontOfLine)
     {
-        array_unshift($this->domains, $this->tenant->domain);
+        array_unshift($this->domains, $bindableTenantData);
     }
     else
     {
-        array_push($this->domains, $this->tenant->domain);
+        array_push($this->domains, $bindableTenantData);
     }
 
     }

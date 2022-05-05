@@ -84,6 +84,24 @@ Configure your tenant and landlord database connections:
         ...
 
 ```
+## X-Magictenant Header
+Out of the box, Tenantmagic will return the ```x-magictenant``` header when responding to a successful authorization request. To reveal the domain and tenant name, the x-magictenant header value (i.e., non-extended notation, using "quoted-string") needs to be decoded:
+
+```php
+    $response = $this->post($route);
+
+    json_decode($response->headers->get('x-magictenant'));
+
+    array:2 [
+    0 => {
+        "domain": "foo.com"
+        "name": "Foo Dot Com"
+    }
+    1 => {
+        "domain": "bar.net"
+        "name": "Bar Dot Net"
+    }];
+```
 
 ## Requirements
 - Your application is configured for [multitenancy](https://spatie.be/docs/laravel-multitenancy/v1/installation/using-multiple-databases) using a separate database for each tenant

@@ -29,7 +29,7 @@ class TenantmagicPassportTest extends TestCase
             'client_id' => $this->passport->id,
             'client_secret' => $this->passport->secret,
             'username' => 'tenant@magic.com',
-            'password' => 'password',
+            'password' => '123',
             'grant_type' => 'password',
             'scopes' => '*',
         ]);
@@ -47,7 +47,7 @@ class TenantmagicPassportTest extends TestCase
             'client_id' => $this->passport->id,
             'client_secret' => $this->passport->secret,
             'username' => 'tenant@magic.com',
-            'password' => 'password',
+            'password' => '123',
             'grant_type' => 'password',
             'scopes' => '*',
         ], [
