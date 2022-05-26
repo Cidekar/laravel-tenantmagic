@@ -82,7 +82,11 @@ trait UsesPassportModelMagic
             }
             else if($user)
             {
-                array_push($this->domains, $tenant->domain);
+                $bindableTenantData = Collect([
+                    'domain' => $tenant->domain,
+                    'name' => $tenant->name
+                ]);
+                array_push($this->domains, $bindableTenantData);
             }
         });
     }
